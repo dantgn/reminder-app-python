@@ -1,10 +1,8 @@
-from fastapi import FastAPI, HTTPException
-from models import TodoItem
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter, HTTPException
 
-app = FastAPI(root_path="/api",
-            title="Reminder App",
-            version="1.0.0")
+from app.models.todo_item import TodoItem
+
+router = APIRouter()
 
 # Create initial todo task
 todo_items_list: list[TodoItem] = [
@@ -15,17 +13,13 @@ todo_items_list: list[TodoItem] = [
   )
 ]
 
-@app.get("/")
-def root():
-    return {"message": "Hello World"}
-
-# Route to get all todo_items
-@app.get("/tasks", status_code=200)
+# Get all todo items
+@router.get("/tasks", status_code=200)
 def get_tasks():
   return todo_items_list
 
-# Route to get todo item by id
-@app.get("/tasks/{id}", status_code=200)
+# Get Todo Item by id
+@router.get("/tasks/{id}", status_code=200)
 def get_task(id):
   task: TodoItem | None = next(filter(lambda x: x.id == int(id), todo_items_list), None)
 
@@ -34,8 +28,8 @@ def get_task(id):
   
   return {"task": task}
 
-
-@app.post("/tasks", status_code=201)
+# Create a new todo item
+@router.post("/tasks", status_code=201)
 def create_task(item: TodoItem):
   if len(todo_items_list) > 0:
     max_id: int = max(todo_items_list, key=lambda y: y.id).id
@@ -47,7 +41,8 @@ def create_task(item: TodoItem):
 
   return { "task": item }
 
-@app.delete("/tasks/{id}", status_code=204)
+# Delete an existing todo item
+@router.delete("/tasks/{id}", status_code=204)
 def delete_task(id: int) -> None:
   task: TodoItem | None = next(filter(lambda x: x.id == int(id), todo_items_list), None)
 
@@ -56,17 +51,3 @@ def delete_task(id: int) -> None:
 
   todo_items_list.remove(task)
   return
-
-origins: list[str] = [
-    "http://localhost",
-    "http://localhost:5173",
-    "https://reminder-tasks-frontend.vercel.app"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=(origins),
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
