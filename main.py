@@ -60,6 +60,7 @@ def delete_task(id: int) -> None:
 origins: list[str] = [
     "http://localhost",
     "http://localhost:5173",
+    "https://reminder-tasks-frontend.vercel.app"
 ]
 
 app.add_middleware(
