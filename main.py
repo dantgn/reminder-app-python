@@ -11,7 +11,7 @@ todo_items_list: list[TodoItem] = [
   TodoItem(
     id=1,
     title="Test Reminder App",
-    description="Please Add and delete reminder tasks as you please in order to test this Reminder App. Thank you."
+    description="Please Add and delete reminder tasks in order to test this Reminder App. Thank you!"
   )
 ]
 
